@@ -1,10 +1,10 @@
 {
-  "name": "formsy-react",
+  "name": "formsy-react-custom",
   "version": "0.17.0",
   "description": "A form input builder and validator for React JS",
   "repository": {
     "type": "git",
-    "url": "https://github.com/christianalfoni/formsy-react.git"
+    "url": "https://github.com/verwolfdotss/formsy-react.git"
   },
   "main": "lib/main.js",
   "scripts": {

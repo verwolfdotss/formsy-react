@@ -42,6 +42,8 @@ Formsy.Form = React.createClass({
       onInvalid: function () {},
       onChange: function () {},
       validationErrors: null,
+      defaultErrorMessages: {},
+      errorMessageFormatter: function(message) { return message },
       preventExternalInvalidation: false
     };
   },
@@ -246,7 +248,24 @@ Formsy.Form = React.createClass({
   runValidation: function (component, value) {
 
     var currentValues = this.getCurrentValues();
-    var validationErrors = component.props.validationErrors;
+    var validationErrors = (function() {
+      var res = {};
+      var rule;
+      for (rule in component.props.validationErrors) {
+        if (component.props.validationErrors.hasOwnProperty(rule)) {
+          res[rule] = this.formatErrorMessage(component.props.validationErrors[rule], component._validations[rule]);
+        }
+      }
+      if (this.props.defaultErrorMessages) {
+        for (rule in this.props.defaultErrorMessages) {
+          if (!res[rule] && this.props.defaultErrorMessages.hasOwnProperty(rule)) {
+            res[rule] = this.formatErrorMessage(this.props.defaultErrorMessages[rule], component._validations[rule]);
+          }
+        }
+      }
+      return res;
+    }).bind(this)();
+
     var validationError = component.props.validationError;
     value = arguments.length === 2 ? value : component.state._value;
 
@@ -296,7 +315,9 @@ Formsy.Form = React.createClass({
     };
 
   },
-
+  formatErrorMessage: function(message, params) {
+    return this.props.errorMessageFormatter(message, params);
+  },
   runRules: function (value, currentValues, validations) {
 
     var results = {
